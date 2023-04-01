@@ -98,6 +98,11 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref RestaurantTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - geo:SearchPlaceIndexForText
+              Resource: !Sub "arn:aws:geo:${AWS::Region}:${AWS::AccountId}:place-index/PlaceIndex"
       Events:
         ApiEvent:
           Type: Api
