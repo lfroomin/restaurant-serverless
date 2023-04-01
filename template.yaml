@@ -1,0 +1,144 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Restaurant Service
+  
+Globals:
+
+  Function:
+    Runtime: go1.x
+    Timeout: 29
+    Environment:
+      Variables:
+        Environment: !Ref EnvironmentParam
+        RestaurantsTable: !Sub "${AWS::StackName}"
+        LocationPlaceIndex: "PlaceIndex"
+
+  Api:
+    OpenApiVersion: 3.0.2
+    Cors:
+      AllowMethods: "'OPTIONS,PUT,POST,GET,DELETE'"
+      AllowHeaders: "'Content-Type,Accept,Authorization'"
+      AllowOrigin: "'*'"
+
+Parameters:
+
+  EnvironmentParam:
+    Description: "The deployment environment"
+    Type: String
+    AllowedValues:
+      - "development"
+      - "integ"
+      - "production"
+    ConstraintDescription: "EnvironmentParam must be development, integ or production"
+
+  ProjectName:
+    Description: "Restaurant Service"
+    Type: String
+    Default: "restaurant"
+
+  ApiStageName:
+    Description: Api Stage Name
+    Type: String
+    Default: "restaurant"
+
+Resources:
+
+  ServerlessApi:
+    Type: AWS::Serverless::Api
+    Cors:
+      AllowCredentials: true
+      AllowMethods: "'OPTIONS,PUT,POST,GET,DELETE'"
+      AllowHeaders: "'Content-Type,Accept,Authorization'"
+      AllowOrigin: "'*'"  
+    Properties:
+      StageName: !Ref ApiStageName
+
+  CreateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: endpoints/create
+      Handler: create
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref RestaurantTable
+        - Statement:
+          - Effect: Allow
+            Action: 
+              - geo:SearchPlaceIndexForText
+            Resource: !Sub "arn:aws:geo:${AWS::Region}:${AWS::AccountId}:place-index/PlaceIndex"
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /
+            Method: POST
+            RestApiId: !Ref ServerlessApi
+
+  ReadFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: endpoints/read
+      Handler: read
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref RestaurantTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /{restaurantId}
+            Method: GET
+            RestApiId: !Ref ServerlessApi
+
+  UpdateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: endpoints/update
+      Handler: update
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref RestaurantTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /{restaurantId}
+            Method: POST
+            RestApiId: !Ref ServerlessApi
+
+  DeleteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: endpoints/delete
+      Handler: delete
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref RestaurantTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /{restaurantId}
+            Method: DELETE
+            RestApiId: !Ref ServerlessApi
+
+
+  RestaurantTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${AWS::StackName}"
+      AttributeDefinitions:
+        - AttributeName: RestaurantId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: RestaurantId
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+
+Outputs:
+  ApiEndpoint:
+    Description: "Api Endpoint"
+    Value: !Sub "https://${ServerlessApi}.execute-api.${AWS::Region}.amazonaws.com/${ApiStageName}/"

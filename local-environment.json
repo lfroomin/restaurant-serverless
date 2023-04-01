@@ -1,0 +1,6 @@
+{
+    "Parameters": {
+        "RestaurantsTable": "restaurant-lf",
+        "LocationPlaceIndex": "PlaceIndex"
+    }
+}

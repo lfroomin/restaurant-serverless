@@ -1,0 +1,142 @@
+openapi: "3.0.2"
+
+info:
+  title: "Restaurant API"
+  version: "1.0.0"
+  
+paths:
+  /:
+    post:
+      description: Create a restaurant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Restaurant'
+      responses:
+        '201':
+          description: Successfully created the restaurant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restaurant'
+  /{restaurantId}:
+    get:
+      description: Read a restaurant
+      parameters:
+        - $ref: '#/components/parameters/RestaurantId'
+      responses:
+        '200':
+          description: Successfully retrieved the restaurant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restaurant'
+        '404':
+          $ref: '#/components/responses/404Error'
+    post:
+      description: Update a restaurant
+      parameters:
+        - $ref: '#/components/parameters/RestaurantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Restaurant'
+      responses:
+        '200':
+          description: Successfully updated the restaurant
+    delete:
+      description: Delete a restaurant
+      parameters:
+        - $ref: '#/components/parameters/RestaurantId'
+      responses:
+        '200':
+          description: Successfully deleted the restaurant
+
+components:
+  schemas:
+    Restaurant:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          description: ID of the restaurant
+        name:
+          type: string
+          description: Name of the restaurant
+        address:
+          $ref: '#/components/schemas/Address'
+        description:
+          type: string
+          description: Description of the restaurant
+        phoneNumber:
+          type: string
+              
+    Address:
+      type: object
+      properties:
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        zipCode:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        location:
+          $ref: '#/components/schemas/Location'
+        timezoneName:
+          type: string
+          description: Name of the timezone following the IANA standard (https://www.iana.org/time-zones)
+          example: "America/Los_Angeles"
+
+    Location:
+      type: object
+      description: Data returned from the Location service
+      properties:
+          geocode:
+            type: string
+            description: Geocode of address (format lat,lon)
+          addressNumber:
+            type: string
+          street:
+            type: string
+          municipality:
+            type: string
+          postalCode:
+            type: string
+          region:
+            type: string
+          subRegion:
+            type: string
+          country:
+            type: string
+
+  parameters:
+    RestaurantId:
+      name: restaurantId
+      in: path
+      description: The restaurant ID
+      required: true
+      schema:
+        type: string
+
+  responses:
+    404Error:
+      description: Restaurant not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string

@@ -1,0 +1,12 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "restaurant"
+s3_bucket = "stacks-lf"
+s3_prefix = "restaurant-lf"
+region = "us-west-2"
+profile = "default"
+capabilities = "CAPABILITY_IAM"
+image_repositories = []
+parameter_overrides = "EnvironmentParam=development"
