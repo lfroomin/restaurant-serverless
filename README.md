@@ -3,7 +3,7 @@ deployed in a serverless environment.
 
 The API is documented using the OAS3 (Swagger) specification,
 and the model is generated from the specification. The
-specification is in the model/restaurant-api.yaml file.
+specification is in the internal/model/restaurant-api.yaml file.
 
 The basic CRUD endpoints exist for the restaurant entity.
 - Create - create a restaurant
