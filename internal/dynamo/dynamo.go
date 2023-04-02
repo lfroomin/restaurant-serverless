@@ -87,6 +87,8 @@ func (rs RestaurantStorage) Get(restaurantId string) (model.Restaurant, bool, er
 func (rs RestaurantStorage) Update(restaurant model.Restaurant) error {
 	fmt.Printf("RestaurantStorage.Update restaurantId: %s\n", *restaurant.Id)
 
+	cond := expression.Equal(expression.Name(key), expression.Value(*restaurant.Id))
+
 	update := expression.Set(
 		expression.Name("Restaurant"),
 		expression.Value(restaurant),
@@ -95,7 +97,7 @@ func (rs RestaurantStorage) Update(restaurant model.Restaurant) error {
 		expression.Value(time.Now().UnixMilli()),
 	)
 
-	expr, err := expression.NewBuilder().WithUpdate(update).Build()
+	expr, err := expression.NewBuilder().WithUpdate(update).WithCondition(cond).Build()
 	if err != nil {
 		return err
 	}
