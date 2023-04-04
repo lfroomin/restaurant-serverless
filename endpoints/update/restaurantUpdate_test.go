@@ -121,24 +121,6 @@ func Test_RestaurantUpdate(t *testing.T) {
 
 			assert.Equal(t, tc.responseCode, resp.StatusCode)
 			assert.Equal(t, tc.responseBody, resp.Body)
-
-			//if tc.responseCode != http.StatusOK {
-			//	assert.Equal(t, tc.responseBody, resp.Body)
-			//} else {
-			//	// Convert to type Restaurant so comparison can be done
-			//	// without the "Id" field
-			//	expRestaurant := model.Restaurant{}
-			//	_ = json.Unmarshal([]byte(tc.responseBody), &expRestaurant)
-			//	body := model.Restaurant{}
-			//	_ = json.Unmarshal([]byte(resp.Body), &body)
-			//
-			//	diff := cmp.Diff(
-			//		expRestaurant,
-			//		body,
-			//		cmpopts.IgnoreFields(model.Restaurant{}, "Id"),
-			//	)
-			//	assert.Empty(t, diff)
-			//}
 		})
 	}
 }
