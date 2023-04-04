@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func Test_RestaurantRead(t *testing.T) {
+func Test_RestaurantDelete(t *testing.T) {
 	testCases := []struct {
 		name         string
 		restaurantId string
