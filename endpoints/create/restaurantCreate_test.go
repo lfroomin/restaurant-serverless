@@ -30,13 +30,12 @@ func Test_RestaurantCreate(t *testing.T) {
 		Name: restName,
 	})
 	testCases := []struct {
-		name             string
-		restaurant       model.Restaurant
-		emptyReqBody     bool
-		validTokenClaims bool
-		responseCode     int
-		responseBody     string
-		stubError        stubError
+		name         string
+		restaurant   model.Restaurant
+		emptyReqBody bool
+		responseCode int
+		responseBody string
+		stubError    stubError
 	}{
 		{"happy path",
 			model.Restaurant{
@@ -44,7 +43,6 @@ func Test_RestaurantCreate(t *testing.T) {
 				Address: &model.Address{},
 			},
 			false,
-			true,
 
 			http.StatusCreated,
 			string(restaurantExp),
@@ -55,7 +53,6 @@ func Test_RestaurantCreate(t *testing.T) {
 				Name: restName,
 			},
 			false,
-			true,
 			http.StatusCreated,
 			string(restaurantNoAddressExp),
 			stubError{},
@@ -63,7 +60,6 @@ func Test_RestaurantCreate(t *testing.T) {
 		{"storage error",
 			model.Restaurant{},
 			false,
-			true,
 			http.StatusInternalServerError,
 			`{"Message":"an error occurred"}`,
 			stubError{restaurant: "an error occurred"},
@@ -74,14 +70,12 @@ func Test_RestaurantCreate(t *testing.T) {
 				Address: &model.Address{},
 			},
 			false,
-			true,
 			http.StatusInternalServerError,
 			`{"Message":"an error occurred"}`,
 			stubError{location: "an error occurred"},
 		},
 		{"empty request body",
 			model.Restaurant{},
-			true,
 			true,
 			http.StatusInternalServerError,
 			`{"Message":"error request body is empty"}`,

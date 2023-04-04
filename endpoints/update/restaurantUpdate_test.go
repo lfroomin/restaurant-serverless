@@ -19,14 +19,13 @@ func Test_RestaurantUpdate(t *testing.T) {
 	restId, restName := "Rest1", "Rest 1"
 
 	testCases := []struct {
-		name             string
-		restaurantId     string
-		restaurant       model.Restaurant
-		emptyReqBody     bool
-		validTokenClaims bool
-		responseCode     int
-		responseBody     string
-		stubError        stubError
+		name         string
+		restaurantId string
+		restaurant   model.Restaurant
+		emptyReqBody bool
+		responseCode int
+		responseBody string
+		stubError    stubError
 	}{
 		{"happy path",
 			restId,
@@ -36,7 +35,6 @@ func Test_RestaurantUpdate(t *testing.T) {
 				Address: &model.Address{},
 			},
 			false,
-			true,
 
 			http.StatusOK,
 			"",
@@ -49,7 +47,6 @@ func Test_RestaurantUpdate(t *testing.T) {
 				Name: restName,
 			},
 			false,
-			true,
 			http.StatusOK,
 			"",
 			stubError{},
@@ -61,7 +58,6 @@ func Test_RestaurantUpdate(t *testing.T) {
 				Name: restName,
 			},
 			false,
-			true,
 			http.StatusInternalServerError,
 			`{"Message":"restaurantId in URL path parameters and restaurant in body do not match"}`,
 			stubError{},
@@ -70,7 +66,6 @@ func Test_RestaurantUpdate(t *testing.T) {
 			restId,
 			model.Restaurant{Id: &restId},
 			false,
-			true,
 			http.StatusInternalServerError,
 			`{"Message":"an error occurred"}`,
 			stubError{restaurant: "an error occurred"},
@@ -83,7 +78,6 @@ func Test_RestaurantUpdate(t *testing.T) {
 				Address: &model.Address{},
 			},
 			false,
-			true,
 			http.StatusInternalServerError,
 			`{"Message":"an error occurred"}`,
 			stubError{location: "an error occurred"},
@@ -91,7 +85,6 @@ func Test_RestaurantUpdate(t *testing.T) {
 		{"empty request body",
 			"",
 			model.Restaurant{},
-			true,
 			true,
 			http.StatusInternalServerError,
 			`{"Message":"error request body is empty"}`,
