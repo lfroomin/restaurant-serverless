@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func restaurantRead(h handler, request events.APIGatewayProxyRequest) *events.APIGatewayProxyResponse {
+func (h handler) restaurantRead(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
 	print.Json("Request", request)
 
 	response := &events.APIGatewayProxyResponse{
@@ -23,7 +23,7 @@ func restaurantRead(h handler, request events.APIGatewayProxyRequest) *events.AP
 	if restaurantId == "" {
 		response.StatusCode = http.StatusBadRequest
 		response.Body = httpHelper.ResponseBodyMsg("restaurantId is empty")
-		return response
+		return response, nil
 	}
 
 	fmt.Printf("read restaurantId: %s\n", restaurantId)
@@ -32,22 +32,22 @@ func restaurantRead(h handler, request events.APIGatewayProxyRequest) *events.AP
 	if err != nil {
 		response.StatusCode = http.StatusInternalServerError
 		response.Body = httpHelper.ResponseBodyMsg(err.Error())
-		return response
+		return response, nil
 	}
 
 	if !exists {
 		response.StatusCode = http.StatusNotFound
-		return response
+		return response, nil
 	}
 
 	data, err := json.Marshal(restaurant)
 	if err != nil {
 		response.StatusCode = http.StatusInternalServerError
 		response.Body = httpHelper.ResponseBodyMsg(fmt.Sprintf("error marshalling data: %s", err.Error()))
-		return response
+		return response, nil
 	}
 
 	response.StatusCode = http.StatusOK
 	response.Body = string(data)
-	return response
+	return response, nil
 }

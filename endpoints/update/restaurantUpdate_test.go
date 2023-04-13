@@ -112,7 +112,7 @@ func Test_RestaurantUpdate(t *testing.T) {
 				request.Body = string(body)
 			}
 
-			resp := restaurantUpdate(h, request)
+			resp, _ := h.restaurantUpdate(request)
 
 			assert.Equal(t, tc.responseCode, resp.StatusCode)
 			assert.Equal(t, tc.responseBody, resp.Body)

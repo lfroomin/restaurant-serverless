@@ -45,7 +45,7 @@ func Test_RestaurantDelete(t *testing.T) {
 			t.Parallel()
 			h := handler{restaurant: restaurantStorerStub{error: tc.stubError}}
 
-			resp := restaurantDelete(h, events.APIGatewayProxyRequest{
+			resp, _ := h.restaurantDelete(events.APIGatewayProxyRequest{
 				PathParameters: map[string]string{"restaurantId": tc.restaurantId},
 			})
 

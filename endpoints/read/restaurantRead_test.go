@@ -57,7 +57,7 @@ func Test_RestaurantRead(t *testing.T) {
 			t.Parallel()
 			h := handler{restaurant: restaurantStorerStub{exists: tc.exists, error: tc.stubError}}
 
-			resp := restaurantRead(h, events.APIGatewayProxyRequest{
+			resp, _ := h.restaurantRead(events.APIGatewayProxyRequest{
 				PathParameters: map[string]string{"restaurantId": tc.restaurantId},
 			})
 

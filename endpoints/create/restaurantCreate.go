@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-func restaurantCreate(h handler, request events.APIGatewayProxyRequest) *events.APIGatewayProxyResponse {
+func (h handler) restaurantCreate(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
 	print.Json("Request", request)
 
 	response := &events.APIGatewayProxyResponse{
@@ -24,12 +24,12 @@ func restaurantCreate(h handler, request events.APIGatewayProxyRequest) *events.
 		if err := json.Unmarshal([]byte(request.Body), &restaurant); err != nil {
 			response.StatusCode = http.StatusInternalServerError
 			response.Body = httpHelper.ResponseBodyMsg(fmt.Sprintf("error unmarshalling request body: %s", err.Error()))
-			return response
+			return response, nil
 		}
 	} else {
 		response.StatusCode = http.StatusBadRequest
 		response.Body = httpHelper.ResponseBodyMsg("error request body is empty")
-		return response
+		return response, nil
 	}
 
 	id := uuid.NewString()
@@ -42,7 +42,7 @@ func restaurantCreate(h handler, request events.APIGatewayProxyRequest) *events.
 		if err != nil {
 			response.StatusCode = http.StatusInternalServerError
 			response.Body = httpHelper.ResponseBodyMsg(err.Error())
-			return response
+			return response, nil
 		}
 
 		restaurant.Address.Location = &location
@@ -52,17 +52,17 @@ func restaurantCreate(h handler, request events.APIGatewayProxyRequest) *events.
 	if err := h.restaurant.Save(restaurant); err != nil {
 		response.StatusCode = http.StatusInternalServerError
 		response.Body = httpHelper.ResponseBodyMsg(err.Error())
-		return response
+		return response, nil
 	}
 
 	data, err := json.Marshal(restaurant)
 	if err != nil {
 		response.StatusCode = http.StatusInternalServerError
 		response.Body = httpHelper.ResponseBodyMsg(fmt.Sprintf("error marshalling data: %s", err.Error()))
-		return response
+		return response, nil
 	}
 
 	response.StatusCode = http.StatusCreated
 	response.Body = string(data)
-	return response
+	return response, nil
 }

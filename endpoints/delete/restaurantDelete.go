@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func restaurantDelete(h handler, request events.APIGatewayProxyRequest) *events.APIGatewayProxyResponse {
+func (h handler) restaurantDelete(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
 	print.Json("Request", request)
 
 	response := &events.APIGatewayProxyResponse{
@@ -22,7 +22,7 @@ func restaurantDelete(h handler, request events.APIGatewayProxyRequest) *events.
 	if restaurantId == "" {
 		response.StatusCode = http.StatusBadRequest
 		response.Body = httpHelper.ResponseBodyMsg("restaurantId is empty")
-		return response
+		return response, nil
 	}
 
 	fmt.Printf("delete restaurantId: %s\n", restaurantId)
@@ -31,9 +31,9 @@ func restaurantDelete(h handler, request events.APIGatewayProxyRequest) *events.
 	if err != nil {
 		response.StatusCode = http.StatusInternalServerError
 		response.Body = httpHelper.ResponseBodyMsg(err.Error())
-		return response
+		return response, nil
 	}
 
 	response.StatusCode = http.StatusOK
-	return response
+	return response, nil
 }

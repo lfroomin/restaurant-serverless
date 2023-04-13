@@ -101,7 +101,7 @@ func Test_RestaurantCreate(t *testing.T) {
 				request = events.APIGatewayProxyRequest{Body: string(body)}
 			}
 
-			resp := restaurantCreate(h, request)
+			resp, _ := h.restaurantCreate(request)
 
 			assert.Equal(t, tc.responseCode, resp.StatusCode)
 

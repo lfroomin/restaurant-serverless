@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
@@ -22,13 +21,7 @@ type handler struct {
 // main is called only once, when the Lambda is initialised (started for the first time).
 func main() {
 	fmt.Println("Begin main")
-	lambda.Start(newHandler().handleRequest)
-}
-
-// handleRequest is intended to be a thin layer with no business logic.  The
-// business logic should be contained in a separate source file.
-func (h handler) handleRequest(_ context.Context, request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
-	return restaurantDelete(h, request), nil
+	lambda.Start(newHandler().restaurantDelete)
 }
 
 // newHandler is used to create service clients, read environments variables,

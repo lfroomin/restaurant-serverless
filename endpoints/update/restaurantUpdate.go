@@ -10,7 +10,7 @@ import (
 	"net/http"
 )
 
-func restaurantUpdate(h handler, request events.APIGatewayProxyRequest) *events.APIGatewayProxyResponse {
+func (h handler) restaurantUpdate(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
 	print.Json("Request", request)
 
 	response := &events.APIGatewayProxyResponse{
@@ -25,20 +25,20 @@ func restaurantUpdate(h handler, request events.APIGatewayProxyRequest) *events.
 		if err := json.Unmarshal([]byte(request.Body), &restaurant); err != nil {
 			response.StatusCode = http.StatusInternalServerError
 			response.Body = httpHelper.ResponseBodyMsg(fmt.Sprintf("error unmarshalling request body: %s", err.Error()))
-			return response
+			return response, nil
 
 		}
 	} else {
 		response.StatusCode = http.StatusBadRequest
 		response.Body = httpHelper.ResponseBodyMsg("error request body is empty")
-		return response
+		return response, nil
 	}
 
 	// Validate input
 	if restaurantId != *restaurant.Id {
 		response.StatusCode = http.StatusBadRequest
 		response.Body = httpHelper.ResponseBodyMsg("restaurantId in URL path parameters and restaurant in body do not match")
-		return response
+		return response, nil
 	}
 
 	fmt.Printf("update restaurantName: %s  restaurantId: %s\n", restaurant.Name, *restaurant.Id)
@@ -49,7 +49,7 @@ func restaurantUpdate(h handler, request events.APIGatewayProxyRequest) *events.
 		if err != nil {
 			response.StatusCode = http.StatusInternalServerError
 			response.Body = httpHelper.ResponseBodyMsg(err.Error())
-			return response
+			return response, nil
 		}
 
 		restaurant.Address.Location = &location
@@ -59,9 +59,9 @@ func restaurantUpdate(h handler, request events.APIGatewayProxyRequest) *events.
 	if err := h.restaurant.Update(restaurant); err != nil {
 		response.StatusCode = http.StatusInternalServerError
 		response.Body = httpHelper.ResponseBodyMsg(err.Error())
-		return response
+		return response, nil
 	}
 
 	response.StatusCode = http.StatusOK
-	return response
+	return response, nil
 }
