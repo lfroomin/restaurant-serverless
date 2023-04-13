@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/location"
 	"github.com/lfroomin/restaurant-serverless/internal/model"
 	"strings"
@@ -16,6 +17,13 @@ type placeSearcher interface {
 type LocationService struct {
 	Client     placeSearcher
 	PlaceIndex string
+}
+
+func New(cfg aws.Config, placeIndex string) LocationService {
+	return LocationService{
+		Client:     location.NewFromConfig(cfg),
+		PlaceIndex: placeIndex,
+	}
 }
 
 func (ls LocationService) Geocode(address model.Address) (model.Location, string, error) {
