@@ -30,7 +30,7 @@ func Test_RestaurantRead(t *testing.T) {
 		{"empty restaurantId",
 			"",
 			true,
-			http.StatusInternalServerError,
+			http.StatusBadRequest,
 			`{"Message":"restaurantId is empty"}`,
 			"",
 		},

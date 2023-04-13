@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/lfroomin/restaurant-serverless/internal/httpHelper"
@@ -10,27 +9,25 @@ import (
 )
 
 func restaurantDelete(h handler, request events.APIGatewayProxyRequest) *events.APIGatewayProxyResponse {
-	restaurantId := getRequest(request)
-
-	err := processRequest(h, restaurantId)
-
-	return getResponse(err)
-}
-
-func getRequest(request events.APIGatewayProxyRequest) string {
 	print.Json("Request", request)
 
-	restaurantId := request.PathParameters["restaurantId"]
-
-	return restaurantId
-}
-
-func getResponse(err error) *events.APIGatewayProxyResponse {
 	response := &events.APIGatewayProxyResponse{
 		Headers: httpHelper.CORSHeaders,
 	}
 	defer print.Json("Response", response)
 
+	restaurantId := request.PathParameters["restaurantId"]
+
+	// Validate input
+	if restaurantId == "" {
+		response.StatusCode = http.StatusBadRequest
+		response.Body = httpHelper.ResponseBodyMsg("restaurantId is empty")
+		return response
+	}
+
+	fmt.Printf("delete restaurantId: %s\n", restaurantId)
+
+	err := h.restaurant.Delete(restaurantId)
 	if err != nil {
 		response.StatusCode = http.StatusInternalServerError
 		response.Body = httpHelper.ResponseBodyMsg(err.Error())
@@ -38,22 +35,5 @@ func getResponse(err error) *events.APIGatewayProxyResponse {
 	}
 
 	response.StatusCode = http.StatusOK
-
 	return response
-}
-
-func processRequest(h handler, restaurantId string) error {
-	fmt.Printf("delete restaurantId: %s\n", restaurantId)
-
-	// Validate input
-	if restaurantId == "" {
-		return errors.New("restaurantId is empty")
-	}
-
-	err := h.restaurant.Delete(restaurantId)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

@@ -79,7 +79,7 @@ func Test_RestaurantCreate(t *testing.T) {
 		{"empty request body",
 			model.Restaurant{},
 			true,
-			http.StatusInternalServerError,
+			http.StatusBadRequest,
 			`{"Message":"error request body is empty"}`,
 			stubError{},
 		},

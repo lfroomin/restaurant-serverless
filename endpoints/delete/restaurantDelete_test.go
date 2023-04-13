@@ -26,7 +26,7 @@ func Test_RestaurantDelete(t *testing.T) {
 		},
 		{"empty restaurantId",
 			"",
-			http.StatusInternalServerError,
+			http.StatusBadRequest,
 			`{"Message":"restaurantId is empty"}`,
 			"",
 		},
