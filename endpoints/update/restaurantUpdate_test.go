@@ -16,6 +16,8 @@ type stubError struct {
 }
 
 func Test_RestaurantUpdate(t *testing.T) {
+	t.Parallel()
+
 	restId, restName := "Rest1", "Rest 1"
 
 	testCases := []struct {

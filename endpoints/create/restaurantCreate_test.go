@@ -18,6 +18,7 @@ type stubError struct {
 }
 
 func Test_RestaurantCreate(t *testing.T) {
+	t.Parallel()
 	restName := "Rest 1"
 	restaurantExp, _ := json.Marshal(model.Restaurant{
 		Name: restName,
@@ -29,6 +30,7 @@ func Test_RestaurantCreate(t *testing.T) {
 	restaurantNoAddressExp, _ := json.Marshal(model.Restaurant{
 		Name: restName,
 	})
+
 	testCases := []struct {
 		name         string
 		restaurant   model.Restaurant

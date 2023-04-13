@@ -9,6 +9,8 @@ import (
 )
 
 func Test_RestaurantDelete(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		name         string
 		restaurantId string

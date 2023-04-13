@@ -10,6 +10,8 @@ import (
 )
 
 func Test_RestaurantRead(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		name         string
 		restaurantId string

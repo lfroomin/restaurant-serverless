@@ -8,6 +8,8 @@ import (
 )
 
 func Test_NewHandler(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		name             string
 		restaurantsTable string

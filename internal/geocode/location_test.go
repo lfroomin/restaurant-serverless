@@ -12,7 +12,7 @@ import (
 )
 
 func Test_Geocode(t *testing.T) {
-
+	t.Parallel()
 	addressNumber := "123"
 	street := "street"
 	line1 := addressNumber + " " + street
