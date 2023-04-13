@@ -11,21 +11,25 @@ import (
 )
 
 func Test_Save(t *testing.T) {
+	t.Parallel()
 	restId := "restId"
+
 	testCases := []struct {
 		name       string
 		restaurant model.Restaurant
 		stubError  string
 		errMsg     string
 	}{
-		{"happy path",
-			model.Restaurant{Id: &restId},
-			"",
-			""},
-		{"error",
-			model.Restaurant{Id: &restId},
-			"an error occurred",
-			"error saving restaurant \"restId\" in dynamo: an error occurred"},
+		{
+			name:       "happy path",
+			restaurant: model.Restaurant{Id: &restId},
+		},
+		{
+			name:       "error",
+			restaurant: model.Restaurant{Id: &restId},
+			stubError:  "an error occurred",
+			errMsg:     "error saving restaurant \"restId\" in dynamo: an error occurred",
+		},
 	}
 
 	for _, tc := range testCases {
@@ -51,24 +55,27 @@ func Test_Save(t *testing.T) {
 }
 
 func Test_Get(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		name      string
 		restId    string
 		stubError string
 		errMsg    string
 	}{
-		{"happy path",
-			"restId",
-			"",
-			""},
-		{"unknown restaurantId",
-			"",
-			"",
-			""},
-		{"error",
-			"restId",
-			"an error occurred",
-			"error getting restaurant \"restId\" in dynamo: an error occurred"},
+		{
+			name:   "happy path",
+			restId: "restId",
+		},
+		{
+			name: "unknown restaurantId",
+		},
+		{
+			name:      "error",
+			restId:    "restId",
+			stubError: "an error occurred",
+			errMsg:    "error getting restaurant \"restId\" in dynamo: an error occurred",
+		},
 	}
 
 	for _, tc := range testCases {
@@ -99,21 +106,25 @@ func Test_Get(t *testing.T) {
 }
 
 func Test_Update(t *testing.T) {
+	t.Parallel()
 	restId := "restId"
+
 	testCases := []struct {
 		name       string
 		restaurant model.Restaurant
 		stubError  string
 		errMsg     string
 	}{
-		{"happy path",
-			model.Restaurant{Id: &restId},
-			"",
-			""},
-		{"error",
-			model.Restaurant{Id: &restId},
-			"an error occurred",
-			"error updating restaurant \"restId\" in dynamo: an error occurred"},
+		{
+			name:       "happy path",
+			restaurant: model.Restaurant{Id: &restId},
+		},
+		{
+			name:       "error",
+			restaurant: model.Restaurant{Id: &restId},
+			stubError:  "an error occurred",
+			errMsg:     "error updating restaurant \"restId\" in dynamo: an error occurred",
+		},
 	}
 
 	for _, tc := range testCases {
@@ -139,20 +150,24 @@ func Test_Update(t *testing.T) {
 }
 
 func Test_Delete(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		name      string
 		restId    string
 		stubError string
 		errMsg    string
 	}{
-		{"happy path",
-			"restId",
-			"",
-			""},
-		{"error",
-			"restId",
-			"an error occurred",
-			"error deleting restaurant \"restId\" from dynamo: an error occurred"},
+		{
+			name:   "happy path",
+			restId: "restId",
+		},
+		{
+			name:      "error",
+			restId:    "restId",
+			stubError: "an error occurred",
+			errMsg:    "error deleting restaurant \"restId\" from dynamo: an error occurred",
+		},
 	}
 
 	for _, tc := range testCases {

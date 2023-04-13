@@ -14,9 +14,10 @@ func Test_NewHandler(t *testing.T) {
 		restaurantsTable string
 		placeIndex       string
 	}{
-		{"happy path",
-			"RestaurantsTable",
-			"LocationPlaceIndex",
+		{
+			name:             "happy path",
+			restaurantsTable: "RestaurantsTable",
+			placeIndex:       "LocationPlaceIndex",
 		},
 	}
 

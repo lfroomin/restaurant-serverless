@@ -12,8 +12,9 @@ func Test_NewHandler(t *testing.T) {
 		name             string
 		restaurantsTable string
 	}{
-		{"happy path",
-			"RestaurantsTable",
+		{
+			name:             "happy path",
+			restaurantsTable: "RestaurantsTable",
 		},
 	}
 

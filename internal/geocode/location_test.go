@@ -50,16 +50,16 @@ func Test_Geocode(t *testing.T) {
 		stubError string
 		errMsg    string
 	}{
-		{"happy path",
-			address,
-			locationExp,
-			"",
-			""},
-		{"error",
-			model.Address{},
-			model.Location{},
-			"an error occurred",
-			"an error occurred"},
+		{
+			name:    "happy path",
+			address: address,
+			loc:     locationExp,
+		},
+		{
+			name:      "error",
+			stubError: "an error occurred",
+			errMsg:    "an error occurred",
+		},
 	}
 
 	for _, tc := range testCases {

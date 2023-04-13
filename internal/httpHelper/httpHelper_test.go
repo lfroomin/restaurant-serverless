@@ -11,13 +11,14 @@ func Test_ResponseBodyMsg(t *testing.T) {
 		input     string
 		expOutput string
 	}{
-		{"happy path",
-			"happy",
-			`{"Message":"happy"}`,
+		{
+			name:      "happy path",
+			input:     "happy",
+			expOutput: `{"Message":"happy"}`,
 		},
-		{"empty string",
-			"",
-			`{"Message":""}`,
+		{
+			name:      "empty string",
+			expOutput: `{"Message":""}`,
 		},
 	}
 
