@@ -30,8 +30,8 @@ func Test_NewHandler(t *testing.T) {
 
 			testHandler := newHandler()
 
-			assert.IsType(t, dynamo.RestaurantStorage{}, testHandler.restaurant)
-			assert.Equal(t, tc.restaurantsTable, testHandler.restaurant.(dynamo.RestaurantStorage).Table)
+			assert.IsType(t, dynamo.RestaurantStorage{}, testHandler.Restaurant)
+			assert.Equal(t, tc.restaurantsTable, testHandler.Restaurant.(dynamo.RestaurantStorage).Table)
 		})
 	}
 }

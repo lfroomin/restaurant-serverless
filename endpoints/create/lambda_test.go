@@ -34,10 +34,10 @@ func Test_NewHandler(t *testing.T) {
 
 			testHandler := newHandler()
 
-			assert.IsType(t, dynamo.RestaurantStorage{}, testHandler.restaurant)
-			assert.Equal(t, tc.restaurantsTable, testHandler.restaurant.(dynamo.RestaurantStorage).Table)
-			assert.IsType(t, geocode.LocationService{}, testHandler.location)
-			assert.Equal(t, tc.placeIndex, testHandler.location.(geocode.LocationService).PlaceIndex)
+			assert.IsType(t, dynamo.RestaurantStorage{}, testHandler.Restaurant)
+			assert.Equal(t, tc.restaurantsTable, testHandler.Restaurant.(dynamo.RestaurantStorage).Table)
+			assert.IsType(t, geocode.LocationService{}, testHandler.Location)
+			assert.Equal(t, tc.placeIndex, testHandler.Location.(geocode.LocationService).PlaceIndex)
 		})
 	}
 }
