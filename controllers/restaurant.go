@@ -188,7 +188,15 @@ func (rc RestaurantController) Update(request events.APIGatewayProxyRequest) (*e
 		return response, nil
 	}
 
+	data, err := json.Marshal(restaurant)
+	if err != nil {
+		response.StatusCode = http.StatusInternalServerError
+		response.Body = httpHelper.ResponseBodyMsg(fmt.Sprintf("error marshalling data: %s", err.Error()))
+		return response, nil
+	}
+
 	response.StatusCode = http.StatusOK
+	response.Body = string(data)
 	return response, nil
 }
 

@@ -178,8 +178,19 @@ func Test_Read(t *testing.T) {
 
 func Test_Update(t *testing.T) {
 	t.Parallel()
-
 	restId, restName := "Rest1", "Rest 1"
+	restaurantExp, _ := json.Marshal(model.Restaurant{
+		Id:   &restId,
+		Name: restName,
+		Address: &model.Address{
+			Location:     &model.Location{},
+			TimezoneName: new(string),
+		},
+	})
+	restaurantNoAddressExp, _ := json.Marshal(model.Restaurant{
+		Id:   &restId,
+		Name: restName,
+	})
 
 	testCases := []struct {
 		name         string
@@ -199,6 +210,7 @@ func Test_Update(t *testing.T) {
 				Address: &model.Address{},
 			},
 			responseCode: http.StatusOK,
+			responseBody: string(restaurantExp),
 		},
 		{
 			name:         "no address",
@@ -208,6 +220,7 @@ func Test_Update(t *testing.T) {
 				Name: restName,
 			},
 			responseCode: http.StatusOK,
+			responseBody: string(restaurantNoAddressExp),
 		},
 		{
 			name:         "restaurantId is nil",
