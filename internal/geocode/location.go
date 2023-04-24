@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/location"
 	"github.com/lfroomin/restaurant-serverless/internal/model"
+	"log"
 	"strings"
 )
 
@@ -30,7 +31,7 @@ func (ls LocationService) Geocode(address model.Address) (model.Location, string
 
 	text := join(address.Line1, address.Line2, address.City, address.State, address.ZipCode, address.Country)
 
-	fmt.Printf("Geocode address: %s\n", text)
+	log.Printf("Geocode address: %s\n", text)
 
 	input := &location.SearchPlaceIndexForTextInput{
 		IndexName:  &ls.PlaceIndex,
@@ -44,7 +45,7 @@ func (ls LocationService) Geocode(address model.Address) (model.Location, string
 	}
 
 	d, _ := json.Marshal(data)
-	fmt.Printf("Location output: %s\n", d)
+	log.Printf("Location output: %s\n", d)
 
 	loc := model.Location{}
 	var timezoneName string

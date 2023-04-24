@@ -2,10 +2,10 @@ package print
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 )
 
 func Json(label string, data any) {
 	str, _ := json.Marshal(data)
-	fmt.Printf("%s: %s\n", label, str)
+	log.Printf("%s: %s\n", label, str)
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/lfroomin/restaurant-serverless/internal/model"
+	"log"
 	"time"
 )
 
@@ -40,7 +41,7 @@ func New(cfg aws.Config, table string) RestaurantStorage {
 }
 
 func (rs RestaurantStorage) Save(restaurant model.Restaurant) error {
-	fmt.Printf("RestaurantStorage.Save restaurantId: %s\n", *restaurant.Id)
+	log.Printf("RestaurantStorage.Save restaurantId: %s\n", *restaurant.Id)
 
 	r := restaurantItem{
 		RestaurantId: *restaurant.Id,
@@ -66,7 +67,7 @@ func (rs RestaurantStorage) Save(restaurant model.Restaurant) error {
 }
 
 func (rs RestaurantStorage) Get(restaurantId string) (model.Restaurant, bool, error) {
-	fmt.Printf("RestaurantStorage.Get restaurantId: %s\n", restaurantId)
+	log.Printf("RestaurantStorage.Get restaurantId: %s\n", restaurantId)
 
 	input := dynamodb.GetItemInput{
 		Key: map[string]types.AttributeValue{
@@ -92,7 +93,7 @@ func (rs RestaurantStorage) Get(restaurantId string) (model.Restaurant, bool, er
 }
 
 func (rs RestaurantStorage) Update(restaurant model.Restaurant) error {
-	fmt.Printf("RestaurantStorage.Update restaurantId: %s\n", *restaurant.Id)
+	log.Printf("RestaurantStorage.Update restaurantId: %s\n", *restaurant.Id)
 
 	cond := expression.Equal(expression.Name(key), expression.Value(*restaurant.Id))
 
@@ -128,7 +129,7 @@ func (rs RestaurantStorage) Update(restaurant model.Restaurant) error {
 }
 
 func (rs RestaurantStorage) Delete(restaurantId string) error {
-	fmt.Printf("RestaurantStorage.Delete restaurantId: %s\n", restaurantId)
+	log.Printf("RestaurantStorage.Delete restaurantId: %s\n", restaurantId)
 
 	input := dynamodb.DeleteItemInput{
 		TableName: aws.String(rs.Table),
