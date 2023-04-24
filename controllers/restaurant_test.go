@@ -6,8 +6,12 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/lfroomin/restaurant-serverless/internal/awsConfig"
+	"github.com/lfroomin/restaurant-serverless/internal/dynamo"
+	"github.com/lfroomin/restaurant-serverless/internal/geocode"
 	"github.com/lfroomin/restaurant-serverless/internal/model"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"net/http"
 	"testing"
 )
@@ -15,6 +19,40 @@ import (
 type stubError struct {
 	restaurant string
 	location   string
+}
+
+func Test_New(t *testing.T) {
+	t.Parallel()
+
+	testCases := []struct {
+		name             string
+		restaurantsTable string
+		placeIndex       string
+	}{
+		{
+			name:             "happy path",
+			restaurantsTable: "RestaurantsTable",
+			placeIndex:       "LocationPlaceIndex",
+		},
+	}
+
+	for _, tc := range testCases {
+		// scoped variable
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			cfg, err := awsConfig.New()
+			require.NoError(t, err)
+
+			r := Restaurant{}.New(cfg, tc.restaurantsTable, tc.placeIndex)
+
+			assert.IsType(t, dynamo.RestaurantStorage{}, r.Restaurant)
+			assert.Equal(t, tc.restaurantsTable, r.Restaurant.(dynamo.RestaurantStorage).Table)
+			assert.IsType(t, geocode.LocationService{}, r.Location)
+			assert.Equal(t, tc.placeIndex, r.Location.(geocode.LocationService).PlaceIndex)
+		})
+	}
 }
 
 func Test_Create(t *testing.T) {
@@ -86,7 +124,7 @@ func Test_Create(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			rc := RestaurantController{
+			rc := Restaurant{
 				Restaurant: restaurantStorerStub{error: tc.stubError.restaurant},
 				Location:   locationServiceStub{error: tc.stubError.location},
 			}
@@ -164,7 +202,7 @@ func Test_Read(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			rc := RestaurantController{Restaurant: restaurantStorerStub{notExist: tc.notExist, error: tc.stubError}}
+			rc := Restaurant{Restaurant: restaurantStorerStub{notExist: tc.notExist, error: tc.stubError}}
 
 			resp, _ := rc.Read(events.APIGatewayProxyRequest{
 				PathParameters: map[string]string{"restaurantId": tc.restaurantId},
@@ -274,7 +312,7 @@ func Test_Update(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			rc := RestaurantController{
+			rc := Restaurant{
 				Restaurant: restaurantStorerStub{error: tc.stubError.restaurant},
 				Location:   locationServiceStub{error: tc.stubError.location},
 			}
@@ -329,7 +367,7 @@ func Test_Delete(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			rc := RestaurantController{Restaurant: restaurantStorerStub{error: tc.stubError}}
+			rc := Restaurant{Restaurant: restaurantStorerStub{error: tc.stubError}}
 
 			resp, _ := rc.Delete(events.APIGatewayProxyRequest{
 				PathParameters: map[string]string{"restaurantId": tc.restaurantId},

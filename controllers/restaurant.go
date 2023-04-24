@@ -11,6 +11,7 @@ import (
 	"github.com/lfroomin/restaurant-serverless/internal/httpHelper"
 	"github.com/lfroomin/restaurant-serverless/internal/model"
 	"github.com/lfroomin/restaurant-serverless/internal/print"
+	"log"
 	"net/http"
 )
 
@@ -25,19 +26,19 @@ type Geocoder interface {
 	Geocode(address model.Address) (model.Location, string, error)
 }
 
-type RestaurantController struct {
+type Restaurant struct {
 	Restaurant RestaurantStorer
 	Location   Geocoder
 }
 
-func (rc RestaurantController) New(cfg aws.Config, restaurantsTable, placeIndex string) RestaurantController {
-	return RestaurantController{
+func (r Restaurant) New(cfg aws.Config, restaurantsTable, placeIndex string) Restaurant {
+	return Restaurant{
 		Restaurant: dynamo.New(cfg, restaurantsTable),
 		Location:   geocode.New(cfg, placeIndex),
 	}
 }
 
-func (rc RestaurantController) Create(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
+func (r Restaurant) Create(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
 	print.Json("Request", request)
 
 	response := &events.APIGatewayProxyResponse{
@@ -60,11 +61,11 @@ func (rc RestaurantController) Create(request events.APIGatewayProxyRequest) (*e
 
 	id := uuid.NewString()
 	restaurant.Id = &id
-	fmt.Printf("create restaurantName: %s  restaurantId: %s\n", restaurant.Name, *restaurant.Id)
+	log.Printf("create restaurantName: %s  restaurantId: %s\n", restaurant.Name, *restaurant.Id)
 
 	// Get the geocode of the restaurant address
 	if restaurant.Address != nil {
-		location, timezoneName, err := rc.Location.Geocode(*restaurant.Address)
+		location, timezoneName, err := r.Location.Geocode(*restaurant.Address)
 		if err != nil {
 			response.StatusCode = http.StatusInternalServerError
 			response.Body = httpHelper.ResponseBodyMsg(err.Error())
@@ -75,7 +76,7 @@ func (rc RestaurantController) Create(request events.APIGatewayProxyRequest) (*e
 		restaurant.Address.TimezoneName = &timezoneName
 	}
 
-	if err := rc.Restaurant.Save(restaurant); err != nil {
+	if err := r.Restaurant.Save(restaurant); err != nil {
 		response.StatusCode = http.StatusInternalServerError
 		response.Body = httpHelper.ResponseBodyMsg(err.Error())
 		return response, nil
@@ -93,7 +94,7 @@ func (rc RestaurantController) Create(request events.APIGatewayProxyRequest) (*e
 	return response, nil
 }
 
-func (rc RestaurantController) Read(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
+func (r Restaurant) Read(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
 	print.Json("Request", request)
 
 	response := &events.APIGatewayProxyResponse{
@@ -110,9 +111,9 @@ func (rc RestaurantController) Read(request events.APIGatewayProxyRequest) (*eve
 		return response, nil
 	}
 
-	fmt.Printf("read restaurantId: %s\n", restaurantId)
+	log.Printf("read restaurantId: %s\n", restaurantId)
 
-	restaurant, exists, err := rc.Restaurant.Get(restaurantId)
+	restaurant, exists, err := r.Restaurant.Get(restaurantId)
 	if err != nil {
 		response.StatusCode = http.StatusInternalServerError
 		response.Body = httpHelper.ResponseBodyMsg(err.Error())
@@ -136,7 +137,7 @@ func (rc RestaurantController) Read(request events.APIGatewayProxyRequest) (*eve
 	return response, nil
 }
 
-func (rc RestaurantController) Update(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
+func (r Restaurant) Update(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
 	print.Json("Request", request)
 
 	response := &events.APIGatewayProxyResponse{
@@ -167,11 +168,11 @@ func (rc RestaurantController) Update(request events.APIGatewayProxyRequest) (*e
 		return response, nil
 	}
 
-	fmt.Printf("update restaurantName: %s  restaurantId: %s\n", restaurant.Name, *restaurant.Id)
+	log.Printf("update restaurantName: %s  restaurantId: %s\n", restaurant.Name, *restaurant.Id)
 
 	// Get the geocode of the restaurant address
 	if restaurant.Address != nil {
-		location, timezoneName, err := rc.Location.Geocode(*restaurant.Address)
+		location, timezoneName, err := r.Location.Geocode(*restaurant.Address)
 		if err != nil {
 			response.StatusCode = http.StatusInternalServerError
 			response.Body = httpHelper.ResponseBodyMsg(err.Error())
@@ -182,7 +183,7 @@ func (rc RestaurantController) Update(request events.APIGatewayProxyRequest) (*e
 		restaurant.Address.TimezoneName = &timezoneName
 	}
 
-	if err := rc.Restaurant.Update(restaurant); err != nil {
+	if err := r.Restaurant.Update(restaurant); err != nil {
 		response.StatusCode = http.StatusInternalServerError
 		response.Body = httpHelper.ResponseBodyMsg(err.Error())
 		return response, nil
@@ -200,7 +201,7 @@ func (rc RestaurantController) Update(request events.APIGatewayProxyRequest) (*e
 	return response, nil
 }
 
-func (rc RestaurantController) Delete(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
+func (r Restaurant) Delete(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
 	print.Json("Request", request)
 
 	response := &events.APIGatewayProxyResponse{
@@ -217,9 +218,9 @@ func (rc RestaurantController) Delete(request events.APIGatewayProxyRequest) (*e
 		return response, nil
 	}
 
-	fmt.Printf("delete restaurantId: %s\n", restaurantId)
+	log.Printf("delete restaurantId: %s\n", restaurantId)
 
-	err := rc.Restaurant.Delete(restaurantId)
+	err := r.Restaurant.Delete(restaurantId)
 	if err != nil {
 		response.StatusCode = http.StatusInternalServerError
 		response.Body = httpHelper.ResponseBodyMsg(err.Error())
