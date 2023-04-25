@@ -105,7 +105,6 @@ func (r Restaurant) Update(request events.APIGatewayProxyRequest) (*events.APIGa
 	if len(request.Body) > 0 {
 		if err := json.Unmarshal([]byte(request.Body), &restaurant); err != nil {
 			return httpResponse.NewServerError(fmt.Sprintf("error unmarshalling request body: %s", err.Error())), nil
-
 		}
 	} else {
 		return httpResponse.NewBadRequest("error request body is empty"), nil
